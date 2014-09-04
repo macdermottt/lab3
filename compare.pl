@@ -9,7 +9,7 @@ system "rm -f $output";
 system "rm -f $probs";
 
 #run your arrayList program
-system "arrayList > $output";
+system "./arrayList > $output";
 
 #compare to the correct one
 system "diff $output $correct > $probs";
