@@ -33,7 +33,8 @@ int getSize(primitiveType type)
             break;
         default:
             // something that should blow it up immediately
-            val = -100;
+            printf("getSize has and invalid type, please fix this");
+            exit(0);
     }
     return val;
 }
@@ -47,17 +48,12 @@ void addElement(arrayList * arylstP, void * element)
        // keep a reference to the old one
        void * oldArray = arylstP->array;
        //malloc a new array
-       arylstP->array = malloc( (arylstP->arraySize) * 2 );
+       int newSize = arylstP->arraySize * getSize( arylstP->type ) * 2;
+       arylstP->array = malloc( newSize );
+       //copy the old elements
+       memcpy( arylstP->array, oldArray, arylstP->arraySize * getSize( arylstP->type )  );
        //update the array size
        arylstP->arraySize = (arylstP->arraySize) * 2 ;
-       //copy the old elements
-       /*
-       int i;
-       for( i = 0; i < sizeof( oldArray ) ; i++ ){
-           (( char * ) arylstP->array)[i] = (( char * ) oldArray)[i];
-       }
-       */
-       memcpy( arylstP->array, oldArray, sizeof(oldArray) );
        // free the old array and kill the pointer
        free( oldArray ); oldArray = NULL;
    }
@@ -70,13 +66,13 @@ void addElement(arrayList * arylstP, void * element)
    switch( arylstP->type )
    {
        case charType:
-            ((char *) arylstP->array)[arylstP->numElements + 1 ] = *((char *)element);
+            ((char *) arylstP->array)[arylstP->numElements ] = *((char *)element);
             break;
        case shortType:
-            ((short *) arylstP->array)[arylstP->numElements + 1 ] = *((short *)element);
+            ((short *) arylstP->array)[arylstP->numElements ] = *((short *)element);
             break;
        case intType:
-            ((int *) arylstP->array)[arylstP->numElements + 1 ] = *((int *)element);
+            ((int *) arylstP->array)[arylstP->numElements ] = *((int *)element);
             break;
        default:
            // handle invalid type?
@@ -92,7 +88,8 @@ void removeElement(arrayList * arylstP, int index)
     {
         // this is invalid
         // TODO log error or some such
-        return;
+        printf("the index is greater than the number of elements!!!!\n");
+        exit(0);
     }
     else{
         int i;
@@ -103,10 +100,10 @@ void removeElement(arrayList * arylstP, int index)
                     ((char*) arylstP->array)[i-1] = ((char*)arylstP->array)[i];
                     break;
                case shortType:
-                    ((short*) arylstP->array)[i-1] = ((short*)arylstP->array)[i];
+                    ((short*) arylstP->array)[i-1] = (unsigned short )((short*)arylstP->array)[i];
                     break;
                case intType:
-                    ((int*) arylstP->array)[i-1] = ((int*)arylstP->array)[i];
+                    ((int*) arylstP->array)[i-1] = (unsigned int)((int*)arylstP->array)[i];
                     break;
             }
         }
@@ -125,13 +122,13 @@ void printArray(arrayList * arylstP)
    {
       if (arylstP->type == charType)
          //fill in the missing code that gets the element and &s it with 0xff
-         printf("%02x ", ((char *) arylstP->array)[i]) ;
+         printf("%02x ", (unsigned char) ((char *) arylstP->array)[i]) ;
       else if (arylstP->type == shortType)
          //fill in the missing code that gets the element and &s it with 0xffff
-         printf("%04x ", ((short *)arylstP->array)[i] );
+         printf("%04x ", (unsigned short) ((short *)arylstP->array)[i] );
       else if (arylstP->type == intType)
          //fill in the missing code that gets the element and &s it with 0xffffffff
-         printf("%08x ", ((int *)arylstP->array)[i] );
+         printf("%08x ", (unsigned int) ((int *)arylstP->array)[i] );
    }
    printf("\n");
 }
